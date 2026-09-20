@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="りそな銀行">
+<title>りそな銀行</title>
+<style>
+  :root{
+    --bg:#0b1210;
+    --bg2:#0f1a17;
+    --card:#121e1a;
+    --line:#1e2f29;
+    --text:#eef3ef;
+    --sub:#7c9187;
+    --accent:#3ddc84;
+    --accent-dim:#1c5236;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  body{
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+  }
+  .status{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 20px 0;
+    font-size:13px;
+    color:var(--sub);
+    letter-spacing:0.02em;
+  }
+  header{
+    padding:18px 20px 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    width:26px;height:26px;
+    border-radius:7px;
+    background:linear-gradient(160deg,var(--accent),#1f8f56);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#08160f;font-size:14px;
+  }
+  header .bankname{
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  main{
+    flex:1;
+    padding:28px 22px 20px;
+  }
+  .label-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+  }
+  .acct-label{
+    font-size:13px;
+    color:var(--sub);
+  }
+  .acct-num{
+    font-size:12px;
+    color:var(--sub);
+    font-variant-numeric:tabular-nums;
+  }
+  .balance-card{
+    background:linear-gradient(155deg,var(--card),var(--bg2));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:26px 22px 24px;
+    margin-top:6px;
+  }
+  .bal-sub{
+    font-size:13px;
+    color:var(--sub);
+    margin-bottom:10px;
+  }
+  .balance{
+    font-variant-numeric:tabular-nums;
+    font-size:clamp(34px,9vw,46px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.1;
+    color:var(--text);
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    word-break:break-all;
+  }
+  .balance .unit{
+    font-size:0.42em;
+    color:var(--sub);
+    font-weight:500;
+  }
+  .delta{
+    margin-top:14px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    color:var(--accent);
+    background:rgba(61,220,132,0.1);
+    padding:5px 10px;
+    border-radius:100px;
+  }
+  .holder{
+    margin-top:22px;
+    display:flex;
+    justify-content:space-between;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:13px;
+    color:var(--sub);
+  }
+  .holder span:last-child{color:var(--text);font-weight:600;}
+  .actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:26px;
+  }
+  .act{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 6px 10px;
+    text-align:center;
+    font-size:11px;
+    color:var(--sub);
+  }
+  .act .ic{
+    width:34px;height:34px;
+    margin:0 auto 8px;
+    border-radius:10px;
+    background:var(--accent-dim);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--accent);
+    font-size:16px;
+  }
+  .history{
+    margin-top:30px;
+  }
+  .history h3{
+    font-size:13px;
+    color:var(--sub);
+    font-weight:500;
+    margin:0 0 12px;
+  }
+  .tx{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .tx .tname{font-size:14px;}
+  .tx .tdate{font-size:11px;color:var(--sub);margin-top:3px;}
+  .tx .tamt{font-size:14px;font-variant-numeric:tabular-nums;}
+  .tx .tamt.plus{color:var(--accent);}
+  footer{
+    text-align:center;
+    padding:14px;
+    font-size:11px;
+    color:var(--sub);
+    opacity:0.7;
+  }
+</style>
+</head>
+<body>
+
+  <div class="status">
+    <span id="clock">9:41</span>
+    <span>●●●●</span>
+  </div>
+
+  <header>
+    <div class="logo">R</div>
+    <div class="bankname">りそな銀行</div>
+  </header>
+
+  <main>
+    <div class="label-row">
+      <div class="acct-label">普通預金</div>
+      <div class="acct-num">口座 1234567</div>
+    </div>
+
+    <div class="balance-card">
+      <div class="bal-sub">現在の残高</div>
+      <div class="balance"><span id="bal">¥0</span></div>
+      <div class="delta">↑ 前回より +¥12,400</div>
+
+      <div class="holder">
+        <span>名義</span>
+        <span>ユウタロウ</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="act"><div class="ic">↗</div>送金</div>
+      <div class="act"><div class="ic">↙</div>入金</div>
+      <div class="act"><div class="ic">⎘</div>明細</div>
+      <div class="act"><div class="ic">⚙</div>設定</div>
+    </div>
+
+    <div class="history">
+      <h3>取引履歴</h3>
+      <div class="tx">
+        <div>
+          <div class="tname">利息</div>
+          <div class="tdate">今日</div>
+        </div>
+        <div class="tamt plus">+¥12,400</div>
+      </div>
+      <div class="tx">
+        <div>
+          <div class="tname">コンビニ ATM</div>
+          <div class="tdate">昨日</div>
+        </div>
+        <div class="tamt">-¥3,000</div>
+      </div>
+      <div class="tx">
+        <div>
+          <div class="tname">給与振込</div>
+          <div class="tdate">3日前</div>
+        </div>
+        <div class="tamt plus">+¥280,000</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>りそな銀行アプリ</footer>
+
+<script>
+  function pad(n){return n.toString().padStart(2,'0');}
+  function updateClock(){
+    const d = new Date();
+    document.getElementById('clock').textContent = pad(d.getHours())+':'+pad(d.getMinutes());
+  }
+  updateClock();
+  setInterval(updateClock, 15000);
+
+  // count-up animation for the balance
+  const target = 9900000000; // 990000万円
+  const el = document.getElementById('bal');
+  const dur = 1400;
+  const start = performance.now();
+  function frame(now){
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = Math.floor(target * eased);
+    el.textContent = '¥' + val.toLocaleString('ja-JP');
+    if(p < 1) requestAnimationFrame(frame);
+    else el.textContent = '¥' + target.toLocaleString('ja-JP');
+  }
+  requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
