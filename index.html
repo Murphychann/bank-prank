@@ -182,6 +182,89 @@
     color:var(--sub);
     opacity:0.7;
   }
+  main{padding-bottom:90px;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .navbar{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:rgba(15,26,23,0.92);
+    backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    display:flex;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .navbtn{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    padding:10px 0 8px;
+    background:none;
+    border:none;
+    color:var(--sub);
+    font-size:10px;
+    font-family:inherit;
+  }
+  .navbtn .navic{font-size:18px;line-height:1;}
+  .navbtn.active{color:var(--accent);}
+  .pagetitle{
+    font-size:20px;
+    font-weight:700;
+    margin:4px 0 20px;
+  }
+  .full-tx-list .tx{padding:14px 0;}
+  .field{
+    margin-bottom:16px;
+  }
+  .field label{
+    display:block;
+    font-size:12px;
+    color:var(--sub);
+    margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    color:var(--text);
+    font-size:15px;
+    font-family:inherit;
+  }
+  .field input:focus{outline:none;border-color:var(--accent);}
+  .primary-btn{
+    width:100%;
+    background:var(--accent);
+    color:#08160f;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:15px;
+    font-weight:700;
+    font-family:inherit;
+    margin-top:8px;
+  }
+  .settings-list{
+    display:flex;
+    flex-direction:column;
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .settings-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 16px;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+    background:var(--card);
+  }
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .arrow{color:var(--sub);}
 </style>
 </head>
 <body>
@@ -197,56 +280,104 @@
   </header>
 
   <main>
-    <div class="label-row">
-      <div class="acct-label">普通預金</div>
-      <div class="acct-num">口座 1234567</div>
-    </div>
 
-    <div class="balance-card">
-      <div class="bal-sub">現在の残高</div>
-      <div class="balance"><span id="bal">¥0</span></div>
-      <div class="delta">↑ 前回より +¥12,400</div>
-
-      <div class="holder">
-        <span>名義</span>
-        <span>ユウタロウ</span>
+    <!-- ホーム -->
+    <section class="screen active" id="screen-home">
+      <div class="label-row">
+        <div class="acct-label">普通預金</div>
+        <div class="acct-num">口座 1234567</div>
       </div>
-    </div>
 
-    <div class="actions">
-      <div class="act"><div class="ic">↗</div>送金</div>
-      <div class="act"><div class="ic">↙</div>入金</div>
-      <div class="act"><div class="ic">⎘</div>明細</div>
-      <div class="act"><div class="ic">⚙</div>設定</div>
-    </div>
+      <div class="balance-card">
+        <div class="bal-sub">現在の残高</div>
+        <div class="balance"><span id="bal">¥0</span></div>
+        <div class="delta">↑ 前回より +¥12,400</div>
 
-    <div class="history">
-      <h3>取引履歴</h3>
-      <div class="tx">
-        <div>
-          <div class="tname">利息</div>
-          <div class="tdate">今日</div>
+        <div class="holder">
+          <span>名義</span>
+          <span>ユウタロウ</span>
         </div>
-        <div class="tamt plus">+¥12,400</div>
       </div>
-      <div class="tx">
-        <div>
-          <div class="tname">コンビニ ATM</div>
-          <div class="tdate">昨日</div>
+
+      <div class="actions">
+        <div class="act" data-goto="screen-transfer"><div class="ic">↗</div>送金</div>
+        <div class="act"><div class="ic">↙</div>入金</div>
+        <div class="act" data-goto="screen-history"><div class="ic">⎘</div>明細</div>
+        <div class="act" data-goto="screen-settings"><div class="ic">⚙</div>設定</div>
+      </div>
+
+      <div class="history">
+        <h3>最近の取引</h3>
+        <div class="tx">
+          <div><div class="tname">利息</div><div class="tdate">今日</div></div>
+          <div class="tamt plus">+¥12,400</div>
         </div>
-        <div class="tamt">-¥3,000</div>
-      </div>
-      <div class="tx">
-        <div>
-          <div class="tname">給与振込</div>
-          <div class="tdate">3日前</div>
+        <div class="tx">
+          <div><div class="tname">コンビニ ATM</div><div class="tdate">昨日</div></div>
+          <div class="tamt">-¥3,000</div>
         </div>
-        <div class="tamt plus">+¥280,000</div>
+        <div class="tx">
+          <div><div class="tname">給与振込</div><div class="tdate">3日前</div></div>
+          <div class="tamt plus">+¥280,000</div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- 明細 -->
+    <section class="screen" id="screen-history">
+      <div class="pagetitle">取引明細</div>
+      <div class="full-tx-list">
+        <div class="tx"><div><div class="tname">利息</div><div class="tdate">今日 9:12</div></div><div class="tamt plus">+¥12,400</div></div>
+        <div class="tx"><div><div class="tname">コンビニ ATM</div><div class="tdate">昨日 18:44</div></div><div class="tamt">-¥3,000</div></div>
+        <div class="tx"><div><div class="tname">給与振込</div><div class="tdate">3日前</div></div><div class="tamt plus">+¥280,000</div></div>
+        <div class="tx"><div><div class="tname">電気代 引落</div><div class="tdate">4日前</div></div><div class="tamt">-¥8,220</div></div>
+        <div class="tx"><div><div class="tname">Amazon.co.jp</div><div class="tdate">5日前</div></div><div class="tamt">-¥4,980</div></div>
+        <div class="tx"><div><div class="tname">投資信託 配当</div><div class="tdate">1週間前</div></div><div class="tamt plus">+¥560,000</div></div>
+        <div class="tx"><div><div class="tname">家賃 引落</div><div class="tdate">1週間前</div></div><div class="tamt">-¥78,000</div></div>
+        <div class="tx"><div><div class="tname">友人へ送金</div><div class="tdate">2週間前</div></div><div class="tamt">-¥15,000</div></div>
+        <div class="tx"><div><div class="tname">定期預金 満期</div><div class="tdate">2週間前</div></div><div class="tamt plus">+¥1,200,000</div></div>
+      </div>
+    </section>
+
+    <!-- 送金 -->
+    <section class="screen" id="screen-transfer">
+      <div class="pagetitle">送金</div>
+      <div class="field">
+        <label>振込先</label>
+        <input type="text" placeholder="口座名義を入力">
+      </div>
+      <div class="field">
+        <label>金額</label>
+        <input type="text" inputmode="numeric" placeholder="¥0">
+      </div>
+      <div class="field">
+        <label>メモ(任意)</label>
+        <input type="text" placeholder="例: お小遣い">
+      </div>
+      <button class="primary-btn" type="button">送金する</button>
+    </section>
+
+    <!-- 設定 -->
+    <section class="screen" id="screen-settings">
+      <div class="pagetitle">設定</div>
+      <div class="settings-list">
+        <div class="settings-row"><span>口座情報</span><span class="arrow">›</span></div>
+        <div class="settings-row"><span>通知</span><span class="arrow">›</span></div>
+        <div class="settings-row"><span>セキュリティ</span><span class="arrow">›</span></div>
+        <div class="settings-row"><span>連携サービス</span><span class="arrow">›</span></div>
+        <div class="settings-row"><span>ヘルプ</span><span class="arrow">›</span></div>
+        <div class="settings-row"><span>ログアウト</span><span class="arrow">›</span></div>
+      </div>
+    </section>
+
   </main>
 
-  <footer>りそな銀行アプリ</footer>
+  <nav class="navbar">
+    <button class="navbtn active" data-goto="screen-home"><span class="navic">⌂</span>ホーム</button>
+    <button class="navbtn" data-goto="screen-history"><span class="navic">⎘</span>明細</button>
+    <button class="navbtn" data-goto="screen-transfer"><span class="navic">↗</span>送金</button>
+    <button class="navbtn" data-goto="screen-settings"><span class="navic">⚙</span>設定</button>
+  </nav>
 
 <script>
   function pad(n){return n.toString().padStart(2,'0');}
@@ -271,6 +402,17 @@
     else el.textContent = '¥' + target.toLocaleString('ja-JP');
   }
   requestAnimationFrame(frame);
+
+  // screen navigation
+  function goTo(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.goto === id));
+    document.querySelector('main').scrollTo(0,0);
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.goto));
+  });
 </script>
 
 </body>
