@@ -2,30 +2,115 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>copy tools</title>
   <style>
     body { font-family: sans-serif; padding: 24px; max-width: 800px; margin: auto; }
+    .box {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    input[type="password"] {
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      margin-right: 8px;
+    }
     button {
-      padding: 12px 20px; font-size: 16px; font-weight: bold;
-      background: #1a73e8; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+      padding: 10px 18px;
+      font-size: 15px;
+      font-weight: bold;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
     button:hover { opacity: 0.9; }
+    button.sub {
+      background: #5f6368;
+      margin-left: 8px;
+    }
     #msg { margin-left: 12px; font-weight: bold; color: #0f9d58; }
+    #loginErr { color: #d93025; font-weight: bold; margin-top: 8px; min-height: 1.2em; }
     .note { margin-top: 14px; font-size: 13px; color: #555; line-height: 1.6; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <h2>copy and paste</h2>
-  <p>ボタンを押してコピー後、Googleスプレッドシートの <strong>A1</strong> セルに貼り付け（Ctrl+V / Cmd+V）してください。</p>
-  <button id="copyAllBtn" type="button">枠線・書式ごとすべてコピー</button>
-  <span id="msg" aria-live="polite"></span>
+  <!-- 簡易ログイン画面 -->
+  <div id="loginView" class="box">
+    <h2>ログイン</h2>
+    <p>パスコードを入力してください。</p>
+    <form id="loginForm">
+      <input id="passInput" type="password" placeholder="パスコード" autocomplete="off" required />
+      <button type="submit">ロック解除</button>
+    </form>
+    <div id="loginErr" aria-live="polite"></div>
+    <p class="note">※ 静的ページ（GitHub Pages）上の簡易ロックのため、高度な機密情報には使わないでください。</p>
+  </div>
 
-  <p class="note">
-    ※ GoogleスプレッドシートはHTML貼り付け時に <code>mso-number-format</code> を反映しないため、貼り付け後に数値範囲を選択して表示形式を <code>#,##0</code>（3桁カンマ・整数表示）に設定してください。<br>
-    ※ <code>file://</code> ではなく <code>https://</code>（GitHub Pages など）またはローカルサーバー上で開いてください。
-  </p>
+  <!-- 解除後に表示されるコピーツール画面 -->
+  <div id="toolView" class="box hidden">
+    <h2>copy and paste</h2>
+    <p>ボタンを押してコピー後、Googleスプレッドシートの <strong>A1</strong> セルに貼り付け（Ctrl+V / Cmd+V）してください。</p>
+    <button id="copyAllBtn" type="button">枠線・書式ごとすべてコピー</button>
+    <button id="lockBtn" class="sub" type="button">ロックする</button>
+    <span id="msg" aria-live="polite"></span>
+
+    <p class="note">
+      ※ GoogleスプレッドシートはHTML貼り付け時に <code>mso-number-format</code> を反映しないため、貼り付け後に数値範囲を選択して表示形式を <code>#,##0</code>（3桁カンマ・整数表示）に設定してください。<br>
+      ※ <code>file://</code> ではなく <code>https://</code>（GitHub Pages など）またはローカルサーバー上で開いてください。
+    </p>
+  </div>
 
   <script>
+    // 任意のパスコードに変更してください
+    const PASSCODE = "0614";
+    const AUTH_KEY = "kashi_tool_unlocked";
+
+    const loginView = document.getElementById("loginView");
+    const toolView = document.getElementById("toolView");
+    const loginForm = document.getElementById("loginForm");
+    const passInput = document.getElementById("passInput");
+    const loginErr = document.getElementById("loginErr");
+    const lockBtn = document.getElementById("lockBtn");
+
+    function showTool() {
+      loginView.classList.add("hidden");
+      toolView.classList.remove("hidden");
+      loginErr.textContent = "";
+    }
+
+    function showLogin() {
+      sessionStorage.removeItem(AUTH_KEY);
+      toolView.classList.add("hidden");
+      loginView.classList.remove("hidden");
+      passInput.value = "";
+      document.getElementById("msg").textContent = "";
+    }
+
+    // 同じタブ内のリロード中は解除状態を維持（タブを閉じるとリセット）
+    if (sessionStorage.getItem(AUTH_KEY) === "1") {
+      showTool();
+    }
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (passInput.value === PASSCODE) {
+        sessionStorage.setItem(AUTH_KEY, "1");
+        showTool();
+      } else {
+        loginErr.textContent = "パスコードが違います。";
+        passInput.select();
+      }
+    });
+
+    lockBtn.addEventListener("click", showLogin);
+
     const rowsData = [
       ["貸会議室料金一覧表", "", "", "", "", ""],
       ["会員名", "基本料金", "時間", "超過料金", "光熱費", "請求額"],
