@@ -62,7 +62,8 @@
     <span id="msg" aria-live="polite"></span>
 
     <p class="note">
-      ※ GoogleスプレッドシートはHTML貼り付け時に <code>mso-number-format</code> を反映しないため、貼り付け後に数値範囲を選択して表示形式を <code>#,##0</code>（3桁カンマ・整数表示）に設定してください。<br>
+      ※ GoogleスプレッドシートはHTML貼り付け時に <code>mso-number-format</code> を反映しないため、貼り付け後に数値範囲を選択して表示形式を <code>#,##0</code>（3桁カンマ・整数表示）に設定してください。
+    </p>
   </div>
 
   <script>
@@ -100,6 +101,7 @@
 
     lockBtn.addEventListener("click", showLogin);
 
+    // スプレッドシート「あいう」(A1:F12) に合わせたデータ
     const rowsData = [
       ["貸会議室料金一覧表", "", "", "", "", ""],
       ["会員名", "基本料金", "時間", "超過料金", "光熱費", "請求額"],
@@ -108,15 +110,17 @@
       ["ヤマモト", 20400, 9, "=B5/6*(C5-6)", "=(B5+D5)*0.05", "=B5+D5+E5"],
       ["南研究", 23700, 10, "=B6/6*(C6-6)", "=(B6+D6)*0.05", "=B6+D6+E6"],
       ["和クラブ", 21600, 7, "=B7/6*(C7-6)", "=(B7+D7)*0.05", "=B7+D7+E7"],
-      ["園芸会", 26200, 6, "=B8/6*(C8-6)", "=(B8+D8)*0.05", "=B8+D8+E8"],
+      ["演芸会", 26200, 6, "=B8/6*(C8-6)", "=(B8+D8)*0.05", "=B8+D8+E8"],
       ["栄町商店", 22500, 8, "=B9/6*(C9-6)", "=(B9+D9)*0.05", "=B9+D9+E9"],
-      ["合 計", "=SUM(B3:B9)", "", "=SUM(D3:D9)", "=SUM(E3:E9)", "=SUM(F3:F9)"],
-      ["平 均", "=AVERAGE(B3:B9)", "", "=AVERAGE(D3:D9)", "=AVERAGE(E3:E9)", "=AVERAGE(F3:F9)"]
+      ["", "", "", "", "", ""],
+      ["合 計", "=SUM(B3:B9)", "ー", "=SUM(D3:D9)", "=SUM(E3:E9)", "=SUM(F3:F9)"],
+      ["平 均", "=AVERAGE(B3:B9)", "ー", "=AVERAGE(D3:D9)", "=AVERAGE(E3:E9)", "=AVERAGE(F3:F9)"]
     ];
 
     function buildHtmlTable(rows) {
       const lastRowIdx = rows.length - 1;
       const bodyRows = rows.map((row, rIdx) => {
+        // 1行目: 表題（A1:F1結合）
         if (rIdx === 0) {
           return `
             <tr>
@@ -125,22 +129,24 @@
         }
 
         const isHeader = rIdx === 1;
-        const isTotalOrAvg = rIdx === 9 || rIdx === 10;
+        const isBlankRow = rIdx === 9;
+        const isTotalOrAvg = rIdx === 10 || rIdx === 11;
         const isBottom = rIdx === lastRowIdx;
         const tag = isHeader ? "th" : "td";
 
         const cells = row.map((cell, cIdx) => {
-          const isLeft = cIdx === 2;
-          const isRight = cIdx === 5;
+          const isLeftEdge = cIdx === 0;
+          const isRightEdge = cIdx === 5;
           const topBorder = isHeader ? "2px solid #000" : "1px solid #000";
           const bottomBorder = isBottom ? "2px solid #000" : "1px solid #000";
-          const leftBorder = isLeft ? "2px solid #000" : "1px solid #000";
-          const rightBorder = isRight ? "2px solid #000" : "1px solid #000";
+          const leftBorder = isLeftEdge ? "2px solid #000" : "1px solid #000";
+          const rightBorder = isRightEdge ? "2px solid #000" : "1px solid #000";
 
           let align = "right";
-          if (isHeader || isTotalOrAvg) {
-            align = cIdx === 0 ? "center" : "right";
-            if (cIdx === 2) align = "center";
+          if (isHeader || isBlankRow) {
+            align = "center";
+          } else if (isTotalOrAvg) {
+            align = (cIdx === 0 || cIdx === 2) ? "center" : "right";
           } else if (cIdx === 0) {
             align = "left";
           }
