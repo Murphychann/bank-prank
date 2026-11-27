@@ -2,115 +2,113 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>貸会議室料金一覧表 コピーツール</title>
+  <title>貸会議室料金一覧表 完全コピーツール</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      max-width: 860px;
-      margin: 32px auto;
-      padding: 0 16px;
-      line-height: 1.6;
-      color: #222;
-    }
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 16px 0;
-    }
+    body { font-family: sans-serif; padding: 24px; max-width: 800px; margin: auto; }
     button {
-      padding: 10px 18px;
-      font-size: 15px;
-      font-weight: 600;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #1a73e8;
-      color: #fff;
+      padding: 12px 20px; font-size: 16px; font-weight: bold;
+      background: #1a73e8; color: #fff; border: none; border-radius: 6px; cursor: pointer;
     }
-    button.secondary {
-      background: #0f9d58;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    #status {
-      margin-left: 8px;
-      font-weight: 600;
-      color: #0b57d0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px 10px;
-    }
-    th {
-      background: #f4f6f9;
-      text-align: center;
-    }
-    td.text {
-      text-align: left;
-    }
-    td.center {
-      text-align: center;
-    }
-    td.num {
-      text-align: right;
-    }
-    .note {
-      font-size: 13px;
-      color: #555;
-      margin-top: 16px;
-    }
+    button:hover { opacity: 0.9; }
+    #msg { margin-left: 12px; font-weight: bold; color: #0f9d58; }
   </style>
 </head>
 <body>
-  <h1>貸会議室料金一覧表（ワンクリックコピー）</h1>
-  <p>ボタンを押してコピーしたあと、スプレッドシートの <strong>A1</strong> セルを選んで貼り付け（Ctrl+V / Cmd+V）してください。</p>
-
-  <div class="actions">
-    <button id="copyFormulasBtn" type="button">数式つきでコピー（A1:F11）</button>
-    <button id="copyValuesBtn" class="secondary" type="button">計算結果（値のみ）でコピー</button>
-    <span id="status" aria-live="polite"></span>
-  </div>
-
-  <table id="previewTable">
-    <thead>
-      <tr>
-        <th>会員名</th>
-        <th>基本料金</th>
-        <th>時間</th>
-        <th>超過料金</th>
-        <th>光熱費</th>
-        <th>請求額</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td class="text">みなと会</td><td class="num">24,600</td><td class="num">8</td><td class="num">8,200</td><td class="num">1,640</td><td class="num">34,440</td></tr>
-      <tr><td class="text">三日月</td><td class="num">22,800</td><td class="num">6</td><td class="num">0</td><td class="num">1,140</td><td class="num">23,940</td></tr>
-      <tr><td class="text">ヤマモト</td><td class="num">20,400</td><td class="num">9</td><td class="num">10,200</td><td class="num">1,530</td><td class="num">32,130</td></tr>
-      <tr><td class="text">南研究</td><td class="num">23,700</td><td class="num">10</td><td class="num">15,800</td><td class="num">1,975</td><td class="num">41,475</td></tr>
-      <tr><td class="text">和クラブ</td><td class="num">21,600</td><td class="num">7</td><td class="num">3,600</td><td class="num">1,260</td><td class="num">26,460</td></tr>
-      <tr><td class="text">園芸会</td><td class="num">26,200</td><td class="num">6</td><td class="num">0</td><td class="num">1,310</td><td class="num">27,510</td></tr>
-      <tr><td class="text">栄町商店</td><td class="num">22,500</td><td class="num">8</td><td class="num">7,500</td><td class="num">1,500</td><td class="num">31,500</td></tr>
-      <tr><td class="center">合 計</td><td class="num">161,800</td><td class="center"></td><td class="num">45,300</td><td class="num">10,355</td><td class="num">217,455</td></tr>
-      <tr><td class="center">平 均</td><td class="num">23,114</td><td class="center"></td><td class="num">6,471</td><td class="num">1,479</td><td class="num">31,065</td></tr>
-    </tbody>
-  </table>
-
-  <p class="note">
-    ※ 貼り付け後、合計・平均の数値に小数点が出る場合は、対象セルを選択して表示形式を整数（<code>#,##0</code>）に変更してください。
-  </p>
+  <h2>貸会議室料金一覧表（枠線・書式・数式まるごとコピー）</h2>
+  <p>ボタンを押してコピー後、Googleスプレッドシートの <strong>A1</strong> セルに貼り付け（Ctrl+V / Cmd+V）してください。</p>
+  <button id="copyAllBtn">枠線・書式ごとすべてコピー</button>
+  <span id="msg"></span>
 
   <script>
-    // A1:F11 に対応したTSVデータ（数式版）
-    const tsvWithFormulas = [
+    const htmlTable = `
+      <table style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt;">
+        <tr>
+          <td colspan="6" style="text-align: center; font-weight: bold; font-size: 14pt; border: none;">貸会議室料金一覧表</td>
+        </tr>
+        <tr>
+          <th style="border-top: 2px solid #000; border-left: 2px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">会員名</th>
+          <th style="border-top: 2px solid #000; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">基本料金</th>
+          <th style="border-top: 2px solid #000; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">時間</th>
+          <th style="border-top: 2px solid #000; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">超過料金</th>
+          <th style="border-top: 2px solid #000; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">光熱費</th>
+          <th style="border-top: 2px solid #000; border-left: 1px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #000; text-align: center; font-weight: bold;">請求額</th>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">みなと会</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">24600</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">8</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B3/6*(C3-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B3+D3)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B3+D3+E3</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">三日月</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">22800</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">6</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B4/6*(C4-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B4+D4)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B4+D4+E4</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">ヤマモト</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">20400</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">9</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B5/6*(C5-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B5+D5)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B5+D5+E5</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">南研究</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">23700</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">10</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B6/6*(C6-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B6+D6)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B6+D6+E6</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">和クラブ</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">21600</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">7</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B7/6*(C7-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B7+D7)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B7+D7+E7</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">園芸会</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">26200</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">6</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B8/6*(C8-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B8+D8)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B8+D8+E8</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: left;">栄町商店</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">22500</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">8</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B9/6*(C9-6)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=(B9+D9)*0.05</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=B9+D9+E9</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: center;">合 計</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=SUM(B3:B9)</td>
+          <td style="border: 1px solid #000; text-align: center;"></td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=SUM(D3:D9)</td>
+          <td style="border: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=SUM(E3:E9)</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: right; mso-number-format:'#,##0';">=SUM(F3:F9)</td>
+        </tr>
+        <tr>
+          <td style="border-left: 2px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: center;">平 均</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: right; mso-number-format:'#,##0';">=AVERAGE(B3:B9)</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: center;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: right; mso-number-format:'#,##0';">=AVERAGE(D3:D9)</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: right; mso-number-format:'#,##0';">=AVERAGE(E3:E9)</td>
+          <td style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000; text-align: right; mso-number-format:'#,##0';">=AVERAGE(F3:F9)</td>
+        </tr>
+      </table>
+    `;
+
+    const plainText = [
       ["貸会議室料金一覧表", "", "", "", "", ""],
       ["会員名", "基本料金", "時間", "超過料金", "光熱費", "請求額"],
       ["みなと会", 24600, 8, "=B3/6*(C3-6)", "=(B3+D3)*0.05", "=B3+D3+E3"],
@@ -122,40 +120,19 @@
       ["栄町商店", 22500, 8, "=B9/6*(C9-6)", "=(B9+D9)*0.05", "=B9+D9+E9"],
       ["合 計", "=SUM(B3:B9)", "", "=SUM(D3:D9)", "=SUM(E3:E9)", "=SUM(F3:F9)"],
       ["平 均", "=AVERAGE(B3:B9)", "", "=AVERAGE(D3:D9)", "=AVERAGE(E3:E9)", "=AVERAGE(F3:F9)"]
-    ].map(row => row.join("\t")).join("\n");
+    ].map(r => r.join("\t")).join("\n");
 
-    // A1:F11 に対応したTSVデータ（値のみ・平均は四捨五入整数）
-    const tsvValuesOnly = [
-      ["貸会議室料金一覧表", "", "", "", "", ""],
-      ["会員名", "基本料金", "時間", "超過料金", "光熱費", "請求額"],
-      ["みなと会", 24600, 8, 8200, 1640, 34440],
-      ["三日月", 22800, 6, 0, 1140, 23940],
-      ["ヤマモト", 20400, 9, 10200, 1530, 32130],
-      ["南研究", 23700, 10, 15800, 1975, 41475],
-      ["和クラブ", 21600, 7, 3600, 1260, 26460],
-      ["園芸会", 26200, 6, 0, 1310, 27510],
-      ["栄町商店", 22500, 8, 7500, 1500, 31500],
-      ["合 計", 161800, "", 45300, 10355, 217455],
-      ["平 均", 23114, "", 6471, 1479, 31065]
-    ].map(row => row.join("\t")).join("\n");
-
-    const statusEl = document.getElementById("status");
-
-    async function copyText(text, label) {
+    document.getElementById("copyAllBtn").addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(text);
-        statusEl.textContent = `${label}をコピーしました！シートのA1に貼り付けてください。`;
-      } catch (err) {
-        statusEl.textContent = "コピーに失敗しました。ブラウザの権限を確認してください。";
+        const item = new ClipboardItem({
+          "text/html": new Blob([htmlTable], { type: "text/html" }),
+          "text/plain": new Blob([plainText], { type: "text/plain" })
+        });
+        await navigator.clipboard.write([item]);
+        document.getElementById("msg").textContent = "コピー完了！スプレッドシートのA1に Ctrl+V で貼り付けてください。";
+      } catch (e) {
+        document.getElementById("msg").textContent = "コピーに失敗しました: " + e.message;
       }
-    }
-
-    document.getElementById("copyFormulasBtn").addEventListener("click", () => {
-      copyText(tsvWithFormulas, "数式つきデータ");
-    });
-
-    document.getElementById("copyValuesBtn").addEventListener("click", () => {
-      copyText(tsvValuesOnly, "値のみデータ");
     });
   </script>
 </body>
