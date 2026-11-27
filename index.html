@@ -101,7 +101,7 @@
 
     lockBtn.addEventListener("click", showLogin);
 
-    // スプレッドシート「あいう」(A1:F12) に合わせたデータ
+    // スプレッドシート (A1:F12) に合わせたデータ
     const rowsData = [
       ["貸会議室料金一覧表", "", "", "", "", ""],
       ["会員名", "基本料金", "時間", "超過料金", "光熱費", "請求額"],
@@ -110,7 +110,7 @@
       ["ヤマモト", 20400, 9, "=B5/6*(C5-6)", "=(B5+D5)*0.05", "=B5+D5+E5"],
       ["南研究", 23700, 10, "=B6/6*(C6-6)", "=(B6+D6)*0.05", "=B6+D6+E6"],
       ["和クラブ", 21600, 7, "=B7/6*(C7-6)", "=(B7+D7)*0.05", "=B7+D7+E7"],
-      ["演芸会", 26200, 6, "=B8/6*(C8-6)", "=(B8+D8)*0.05", "=B8+D8+E8"],
+      ["園芸会", 26200, 6, "=B8/6*(C8-6)", "=(B8+D8)*0.05", "=B8+D8+E8"],
       ["栄町商店", 22500, 8, "=B9/6*(C9-6)", "=(B9+D9)*0.05", "=B9+D9+E9"],
       ["", "", "", "", "", ""],
       ["合 計", "=SUM(B3:B9)", "ー", "=SUM(D3:D9)", "=SUM(E3:E9)", "=SUM(F3:F9)"],
@@ -120,11 +120,11 @@
     function buildHtmlTable(rows) {
       const lastRowIdx = rows.length - 1;
       const bodyRows = rows.map((row, rIdx) => {
-        // 1行目: 表題（A1:F1結合）
+        // 1行目: 表題（A1:F1結合・標準サイズ10pt・太字なし）
         if (rIdx === 0) {
           return `
             <tr>
-              <td colspan="6" style="text-align:center; font-weight:bold; font-size:14pt; border:none;">${row[0]}</td>
+              <td colspan="6" style="text-align:center; font-weight:normal; font-size:10pt; border:none;">${row[0]}</td>
             </tr>`;
         }
 
@@ -132,7 +132,6 @@
         const isBlankRow = rIdx === 9;
         const isTotalOrAvg = rIdx === 10 || rIdx === 11;
         const isBottom = rIdx === lastRowIdx;
-        const tag = isHeader ? "th" : "td";
 
         const cells = row.map((cell, cIdx) => {
           const isLeftEdge = cIdx === 0;
@@ -151,23 +150,23 @@
             align = "left";
           }
 
-          const boldStyle = isHeader ? "font-weight:bold;" : "";
           const style = [
             `border-top:${topBorder}`,
             `border-bottom:${bottomBorder}`,
             `border-left:${leftBorder}`,
             `border-right:${rightBorder}`,
             `text-align:${align}`,
-            boldStyle
-          ].filter(Boolean).join(";");
+            `font-weight:normal`,
+            `font-size:10pt`
+          ].join(";");
 
-          return `<${tag} style="${style}">${cell}</${tag}>`;
+          return `<td style="${style}">${cell}</td>`;
         }).join("");
 
         return `<tr>${cells}</tr>`;
       }).join("");
 
-      return `<table style="border-collapse:collapse; font-family:Arial,sans-serif; font-size:11pt;">${bodyRows}</table>`;
+      return `<table style="border-collapse:collapse; font-family:Arial,sans-serif; font-size:10pt; font-weight:normal;">${bodyRows}</table>`;
     }
 
     const htmlTable = buildHtmlTable(rowsData);
