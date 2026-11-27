@@ -68,9 +68,7 @@
   </div>
 
   <script>
-    // 任意のパスコードに変更してください
     const PASSCODE = "0614";
-    const AUTH_KEY = "kashi_tool_unlocked";
 
     const loginView = document.getElementById("loginView");
     const toolView = document.getElementById("toolView");
@@ -86,22 +84,15 @@
     }
 
     function showLogin() {
-      sessionStorage.removeItem(AUTH_KEY);
       toolView.classList.add("hidden");
       loginView.classList.remove("hidden");
       passInput.value = "";
       document.getElementById("msg").textContent = "";
     }
 
-    // 同じタブ内のリロード中は解除状態を維持（タブを閉じるとリセット）
-    if (sessionStorage.getItem(AUTH_KEY) === "1") {
-      showTool();
-    }
-
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
       if (passInput.value === PASSCODE) {
-        sessionStorage.setItem(AUTH_KEY, "1");
         showTool();
       } else {
         loginErr.textContent = "パスコードが違います。";
